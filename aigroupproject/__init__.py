@@ -10,6 +10,10 @@ def create_app():
     load_logs(app)
     # activate extensions after flask exists to tell db manager how to connect to it.
 
+    from aigroupproject.main import bp as main_bp
+
+    app.register_blueprint(main_bp)
+
     return app
 
 
