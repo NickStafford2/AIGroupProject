@@ -1,5 +1,20 @@
 # AI Group Project
 
+Some instructions here to help you guys get started.
+
+Setup the frontend server with:
+
+```
+cd frontend
+npm install
+```
+
+Run the frontend server with:
+
+```
+npm run dev
+```
+
 # Installation and Environment Setup
 
 Clone the repo to your local machine
