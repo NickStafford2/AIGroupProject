@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "aigroupproject"
+version = "0.1.0"
+description = ""
+authors = ["Nicholas Stafford"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+numpy = "^1.26.1"
+Flask = "^3.1.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 90
+target-version = "py312"
+
+[tool.ruff.lint]
+# select = ["ALL"] # Only uncomment if we want to get pedantic
+select = [
+  # pycodestyle
+  "E",
+  # Pyflakes
+  "F",
+  # pyupgrade
+  "UP",
+  # flake8-bugbear
+  "B",
+  # flake8-simplify
+  "SIM",
+  # isort
+  "I",
+]
+
+[tool.ruff.format]
+quote-style = "double"
