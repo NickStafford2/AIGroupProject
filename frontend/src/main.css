@@ -1,0 +1,5 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* I strongly reccomend using tailwind for all your css. It is quite easy */
