@@ -7,7 +7,6 @@ import flask
 
 def create_app():
     app = flask.Flask(__name__)
-    app.config.from_object(config_class)
     load_logs(app)
     # activate extensions after flask exists to tell db manager how to connect to it.
 
