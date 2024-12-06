@@ -41,7 +41,7 @@ def solve(board):
     return True
 
 
-def most_constrained_variable(board: list[list[int]]) -> list[tuple[int, int]]:
+def most_constrained_variables(board: list[list[int]]) -> list[tuple[int, int]]:
     tied_cells: list[tuple[int, int]] = []
     min_valid_values = 10  # Start with a value larger than the max (9)
 
@@ -62,8 +62,11 @@ def most_constrained_variable(board: list[list[int]]) -> list[tuple[int, int]]:
     return tied_cells
 
 
-def most_constraining_variable(board, tied_cells):
-    # from a list of tied cells, find the cell that imposes the most constraints on its neighbors.
+def most_constraining_variable(
+    board: list[list[int]], tied_cells: list[tuple[int, int]]
+) -> tuple[int, int]:
+    """from a list of tied cells, find the cell that imposes the most constraints on its
+    neighbors. if there is a tie, return random of the maxs"""
     max_constraints = -1
     most_constraining_cell = tied_cells[0]
 
@@ -92,9 +95,9 @@ def most_constraining_variable(board, tied_cells):
     return most_constraining_cell
 
 
-def least_constraining_values(board, row, col):
-    # sorting values for a cell by their least constraining effect
-    candidates = []
+def least_constraining_values(board: list[list[int]], row: int, col: int) -> list[int]:
+    """Get the possible values of a cell, ordered by their least constraining effect"""
+    candidates: list[tuple[int, int]] = []
     for num in range(1, 10):
         if is_valid(board, row, col, num):
             # counting how many other cells this value would restrict
@@ -105,21 +108,23 @@ def least_constraining_values(board, row, col):
             for c in range(9):
                 if board[row][c] == 0 and is_valid(board, row, c, num):
                     constraint_count += 1
+            """ I am pretty sure we need to count the 3x3 subgrid as well."""
             candidates.append((num, constraint_count))
-    # sorting by the number of constraints (ascending)
+
+    # Sort by the number of constraints (ascending)
     candidates.sort(key=lambda x: x[1])
     return [x[0] for x in candidates]
 
 
 def solve_heuristics(board: list[list[int]]):
-    # finding the most constrained variable(s)
-    tied_cells = most_constrained_variable(board)
+    # Finding the most constrained variable(s)
+    tied_cells: list[tuple[int, int]] = most_constrained_variables(board)
 
-    # if the board is solved
+    # If the board is solved
     if not tied_cells:
         return True
 
-    # if there's a tie, use Most Constraining Variable to break it
+    # If there's a tie, use Most Constraining Variable to break it
     if len(tied_cells) > 1:
         row, col = most_constraining_variable(board, tied_cells)
     else:
