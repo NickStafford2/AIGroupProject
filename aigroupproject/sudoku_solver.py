@@ -1,21 +1,23 @@
 # my_solver.py
-from sudoku_py import Sudoku as Sud
 
 def find_list_of_board(grid):
     puzzle_cols = []
     for x in range(9):
         puzzle_string = []
         for i in range(9):
-            elem = grid[x][i] if grid[x][i] is not None else 0
+            elem = grid[x][i] 
+            if elem == None:
+                elem = 0
             puzzle_string.append(elem)
         puzzle_cols.append(puzzle_string)
     return puzzle_cols
 
 def is_valid(board, row, col, num):
     for i in range(9):
-        if board[row][i] == num or board[i][col] == num:
+        if (board[row][i] == num) or (board[i][col] == num):
             return False
-    start_row, start_col = row - row % 3, col - col % 3
+    start_row = row - row % 3
+    start_col =  col - col % 3
     for i in range(3):
         for j in range(3):
             if board[i + start_row][j + start_col] == num:

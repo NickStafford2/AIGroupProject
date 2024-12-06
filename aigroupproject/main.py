@@ -8,8 +8,9 @@ def test():
     return "success"
 
 # main.py
+from sudoku_py import Sudoku as Sud
 from sudoku import Sudoku
-from sudoku_solver import find_list_of_board, solve, Sud
+from sudoku_solver import find_list_of_board, solve
 
 difficulty = float(input("What difficulty would you like the puzzle to be?[0-1]: "))
 puzzle = Sudoku(3).difficulty(difficulty)
