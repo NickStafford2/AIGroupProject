@@ -1,29 +1,68 @@
-from flask import Blueprint, jsonify, request
-
-bp = Blueprint("main", __name__)
-
-
-@bp.route("/test", methods=["GET"])
-def test():
-    return "success"
-
 # main.py
 from sudoku_py import Sudoku as Sud
 from sudoku import Sudoku
-from sudoku_solver import find_list_of_board, solve
 
-difficulty = float(input("What difficulty would you like the puzzle to be?[0-1]: "))
-puzzle = Sudoku(3).difficulty(difficulty)
-puzzle.show()
-solution = puzzle.solve()
+import aigroupproject.cli as cli
+import aigroupproject.sudoku_solver as solver
 
-board = find_list_of_board(puzzle.board)
-print("This is the actual solution: ")
-solution.show()
 
-if solve(board):
-    print("Solved Sudoku from AI:")
-    result = Sud(board)
-    print(result)
-else:
-    print("No solution exists.")
+def main(puzzle: Sudoku):
+    puzzle.show()
+    solution = puzzle.solve()
+
+    print("This is the actual solution: ")
+    solution.show()
+
+    board = solver.format_board(puzzle.board)
+    if solver.solve_heuristics(board):
+        print("Solved Sudoku board:")
+        # result = Sud(board)
+        result = __format_board_ascii(board)
+        print(result)
+        # for row in board:
+        #     print(row)
+    else:
+        print("No solution exists.")
+
+
+def from_nothing(puzzle: Sudoku):
+    puzzle.show()
+    solution = puzzle.solve()
+
+    print("This is the actual solution: ")
+    solution.show()
+
+    board = solver.format_board(puzzle.board)
+    if solver.solve_heuristics(board):
+        print("Solved Sudoku board:")
+        # result = Sud(board)
+        result = __format_board_ascii(board)
+        print(result)
+        # for row in board:
+        #     print(row)
+    else:
+        print("No solution exists.")
+
+
+def __format_board_ascii(board: list[list[int]]) -> str:
+    width = 3
+    height = 3
+    size = width * height
+
+    table = ""
+    cell_length = len(str(size))
+    format_int = "{0:0" + str(cell_length) + "d}"
+    for i, row in enumerate(board):
+        if i == 0:
+            table += ("+-" + "-" * (cell_length + 1) * width) * height + "+" + "\n"
+        table += (("| " + "{} " * width) * height + "|").format(
+            *[(format_int.format(x) if x != 0 else " " * cell_length) for x in row]
+        ) + "\n"
+        if i == size - 1 or i % height == height - 1:
+            table += ("+-" + "-" * (cell_length + 1) * width) * height + "+" + "\n"
+    return table
+
+
+if __name__ == "__main__":
+    puzzle = cli.get_puzzle()
+    main(puzzle)

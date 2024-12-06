@@ -202,6 +202,17 @@ files = [
 ]
 
 [[package]]
+name = "py-sudoku"
+version = "2.0.0"
+description = "A simple Python package that generates and solves m x n Sudoku puzzles."
+optional = false
+python-versions = ">=2.7"
+files = [
+    {file = "py_sudoku-2.0.0-py3-none-any.whl", hash = "sha256:c41ff4bdfa69ee6f1950884a7473e38f9464bd300742916b2bea1a16b4c5f9d9"},
+    {file = "py_sudoku-2.0.0.tar.gz", hash = "sha256:7cc9bb0dd0f2fbcd10031fea69f3a3a10f1e08a28f6571548f555c99654c9a2b"},
+]
+
+[[package]]
 name = "python-dotenv"
 version = "1.0.1"
 description = "Read key-value pairs from a .env file and set them as environment variables"
@@ -235,4 +246,4 @@ watchdog = ["watchdog (>=2.3)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "69e7e36c632df3584c81d86b310612d21c5c39e5fb9295ce262fef052fba8ba8"
+content-hash = "5738818d40f6cfd8910f74acc7a3e0aaeff6071debe9bb34964b31f513220ea4"
