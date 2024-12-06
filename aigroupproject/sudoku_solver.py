@@ -27,20 +27,6 @@ def is_valid(board: list[list[int]], row: int, col: int, num: int) -> bool:
     return True
 
 
-def solve_algorithm_stupid(board: list[list[int]]):
-    for row in range(9):
-        for col in range(9):
-            if board[row][col] == 0:
-                for num in range(1, 10):
-                    if is_valid(board, row, col, num):
-                        board[row][col] = num
-                        if solve_algorithm_stupid(board):
-                            return True
-                        board[row][col] = 0
-                return False
-    return True
-
-
 def most_constrained_variables(board: list[list[int]]) -> list[tuple[int, int]]:
     tied_cells: list[tuple[int, int]] = []
     min_valid_values = 10  # Start with a value larger than the max (9)
@@ -140,3 +126,17 @@ def solve_heuristics(board: list[list[int]]):
         # print(f"Backtracking at ({row}, {col})")
 
     return False
+
+
+def solve_algorithm_stupid(board: list[list[int]]):
+    for row in range(9):
+        for col in range(9):
+            if board[row][col] == 0:
+                for num in range(1, 10):
+                    if is_valid(board, row, col, num):
+                        board[row][col] = num
+                        if solve_algorithm_stupid(board):
+                            return True
+                        board[row][col] = 0
+                return False
+    return True
