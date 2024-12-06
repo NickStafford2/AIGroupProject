@@ -41,9 +41,8 @@ def solve(board):
     return True
 
 
-def most_constrained_variable(board):
-    # the cell(s) with the fewest valid values remaining.
-    tied_cells = []
+def most_constrained_variable(board: list[list[int]]) -> list[tuple[int, int]]:
+    tied_cells: list[tuple[int, int]] = []
     min_valid_values = 10  # Start with a value larger than the max (9)
 
     for r in range(9):
@@ -53,10 +52,12 @@ def most_constrained_variable(board):
                     num for num in range(1, 10) if is_valid(board, r, c, num)
                 ]
                 if len(valid_values) == min_valid_values:
-                    tied_cells.append((r, c))  # addi to tied cells
+                    # ties are allowed, if two cells are equally constrained
+                    tied_cells.append((r, c))
                 elif len(valid_values) < min_valid_values:
                     min_valid_values = len(valid_values)
-                    tied_cells = [(r, c)]  # resetting with new minimum
+                    # remove old cells, since this cell is more constrined.
+                    tied_cells = [(r, c)]
 
     return tied_cells
 
@@ -110,9 +111,8 @@ def least_constraining_values(board, row, col):
     return [x[0] for x in candidates]
 
 
-def solve_heuristics(board):
-
-    # findinjg the most constrained variable(s)
+def solve_heuristics(board: list[list[int]]):
+    # finding the most constrained variable(s)
     tied_cells = most_constrained_variable(board)
 
     # if the board is solved
