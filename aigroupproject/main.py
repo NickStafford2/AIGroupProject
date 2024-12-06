@@ -1,4 +1,4 @@
-# cli.py
+# main.py
 from sudoku import Sudoku
 
 import aigroupproject.cli as cli
@@ -9,22 +9,7 @@ from aigroupproject.sudoku_solver import (
 )
 
 
-def get_puzzle_from_cli():
-    if (
-        input(
-            "Do you want to enter custom sudoku board or automatically generated board?\n (press 'c' for custom): "
-        )
-        == "c"
-    ):
-        custom_grid = cli.get_custom_puzzle()
-        return Sudoku(3, board=custom_grid)
-    else:
-        difficulty = cli.get_difficulty()
-        return Sudoku(3).difficulty(difficulty)
-
-
 def main(puzzle: Sudoku):
-
     puzzle.show()
     solution = puzzle.solve()
 
@@ -43,5 +28,5 @@ def main(puzzle: Sudoku):
 
 
 if __name__ == "__main__":
-    puzzle = get_puzzle_from_cli()
+    puzzle = cli.get_puzzle()
     main(puzzle)
