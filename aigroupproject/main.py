@@ -1,23 +1,20 @@
 # main.py
 from sudoku import Sudoku
+from sudoku_py import Sudoku as Sud
 
 import aigroupproject.cli as cli
-from aigroupproject.sudoku_solver import (
-    Sud,
-    find_list_of_board,
-    solve_heuristics,
-)
+import aigroupproject.sudoku_solver as solver
 
 
 def main(puzzle: Sudoku):
     puzzle.show()
     solution = puzzle.solve()
 
-    board = find_list_of_board(puzzle.board)
     print("This is the actual solution: ")
     solution.show()
 
-    if solve_heuristics(board):
+    board = solver.format_board(puzzle.board)
+    if solver.solve_heuristics(board):
         print("Solved Sudoku board:")
         result = Sud(board)
         print(result)

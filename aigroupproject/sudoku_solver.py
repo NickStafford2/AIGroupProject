@@ -1,18 +1,16 @@
-# my_solver.py
-
-from sudoku_py import Sudoku as Sud
+# sudoku_solver.py
 
 
-def find_list_of_board(grid: list[list[int | None]]):
-    """What is this doing?"""
-    puzzle_cols = []
+def format_board(grid: list[list[int | None]]) -> list[list[int]]:
+    """Replace the None values in the grid with 0's"""
+    cols: list[list[int]] = []
     for i in range(9):
-        puzzle_string = []
+        row = []
         for j in range(9):
             elem = grid[i][j] if grid[i][j] is not None else 0
-            puzzle_string.append(elem)
-        puzzle_cols.append(puzzle_string)
-    return puzzle_cols
+            row.append(elem)
+        cols.append(row)
+    return cols
 
 
 def is_valid(board: list[list[int]], row: int, col: int, num: int) -> bool:
