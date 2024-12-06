@@ -1,33 +1,23 @@
 # my_solver.py
+
 from sudoku_py import Sudoku as Sud
 
-def get_custom_puzzle():
-    print("Enter your custom Sudoku grid (row by row, 9 values per row):")
-    grid = []
-    for i in range(9):
-        while True:
-            try:
-                row = input(f"Enter row {i + 1} (comma-separated numbers, 0 for empty cells): ")
-                row = [int(num) for num in row.split(",")]
-                if len(row) != 9:
-                    raise ValueError("Each row must have exactly 9 values.")
-                grid.append(row)
-                break
-            except ValueError as e:
-                print(f"Invalid input: {e}. Try again.")
-    return grid
 
-def find_list_of_board(grid):
+def find_list_of_board(grid: list[list[int | None]]):
+    """What is this doing?"""
     puzzle_cols = []
-    for x in range(9):
+    for i in range(9):
         puzzle_string = []
-        for i in range(9):
-            elem = grid[x][i] if grid[x][i] is not None else 0
+        for j in range(9):
+            elem = grid[i][j] if grid[i][j] is not None else 0
             puzzle_string.append(elem)
         puzzle_cols.append(puzzle_string)
     return puzzle_cols
 
-def is_valid(board, row, col, num):
+
+def is_valid(board: list[list[int]], row: int, col: int, num: int) -> bool:
+    """Checks if the input 'num, can be added to the board"""
+
     for i in range(9):
         if board[row][i] == num or board[i][col] == num:
             return False
@@ -37,6 +27,7 @@ def is_valid(board, row, col, num):
             if board[i + start_row][j + start_col] == num:
                 return False
     return True
+
 
 def solve(board):
     for row in range(9):
@@ -59,8 +50,10 @@ def most_constrained_variable(board):
 
     for r in range(9):
         for c in range(9):
-            if board[r][c] == 0: 
-                valid_values = [num for num in range(1, 10) if is_valid(board, r, c, num)]
+            if board[r][c] == 0:
+                valid_values = [
+                    num for num in range(1, 10) if is_valid(board, r, c, num)
+                ]
                 if len(valid_values) == min_valid_values:
                     tied_cells.append((r, c))  # addi to tied cells
                 elif len(valid_values) < min_valid_values:
@@ -73,16 +66,16 @@ def most_constrained_variable(board):
 def most_constraining_variable(board, tied_cells):
     # from a list of tied cells, find the cell that imposes the most constraints on its neighbors.
     max_constraints = -1
-    most_constraining_cell = tied_cells[0] 
+    most_constraining_cell = tied_cells[0]
 
     for r, c in tied_cells:
         constraints = 0
 
         # counting unassigned cells in the same row and column
         for i in range(9):
-            if board[r][i] == 0: 
+            if board[r][i] == 0:
                 constraints += 1
-            if board[i][c] == 0:  
+            if board[i][c] == 0:
                 constraints += 1
 
         # counting unassigned cells in the subgrid
@@ -98,8 +91,6 @@ def most_constraining_variable(board, tied_cells):
             most_constraining_cell = (r, c)
 
     return most_constraining_cell
-
-
 
 
 def least_constraining_values(board, row, col):
@@ -121,9 +112,8 @@ def least_constraining_values(board, row, col):
     return [x[0] for x in candidates]
 
 
-
 def solve_heuristics(board):
-    
+
     # findinjg the most constrained variable(s)
     tied_cells = most_constrained_variable(board)
 
@@ -131,7 +121,7 @@ def solve_heuristics(board):
     if not tied_cells:
         return True
 
-    #if there's a tie, use Most Constraining Variable to break it
+    # if there's a tie, use Most Constraining Variable to break it
     if len(tied_cells) > 1:
         row, col = most_constraining_variable(board, tied_cells)
     else:
@@ -141,9 +131,9 @@ def solve_heuristics(board):
     for num in least_constraining_values(board, row, col):
         board[row][col] = num
         # print(f"Trying {num} at ({row}, {col})")
-        if solve_heuristics(board):  
+        if solve_heuristics(board):
             return True
-        board[row][col] = 0 
+        board[row][col] = 0
         # print(f"Backtracking at ({row}, {col})")
 
-    return False 
+    return False

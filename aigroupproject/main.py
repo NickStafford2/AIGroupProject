@@ -1,43 +1,47 @@
-from flask import Blueprint, jsonify, request
-
-bp = Blueprint("main", __name__)
-
-
-@bp.route("/test", methods=["GET"])
-def test():
-    return "success"
-
-# main.py
+# cli.py
 from sudoku import Sudoku
-from sudoku_solver import find_list_of_board, Sud, get_custom_puzzle, solve_heuristics, solve
+
+import aigroupproject.cli as cli
+from aigroupproject.sudoku_solver import (
+    Sud,
+    find_list_of_board,
+    solve_heuristics,
+)
 
 
-# get the custom puzzle from the user
-custom_grid = None
-puzzle = None
+def get_puzzle_from_cli():
+    if (
+        input(
+            "Do you want to enter custom sudoku board or automatically generated board?\n (press 'c' for custom): "
+        )
+        == "c"
+    ):
+        custom_grid = cli.get_custom_puzzle()
+        return Sudoku(3, board=custom_grid)
+    else:
+        difficulty = cli.get_difficulty()
+        return Sudoku(3).difficulty(difficulty)
 
 
+def main(puzzle: Sudoku):
 
-if (input("Do you want to enter custom sudoku board or automatically generated board?\n (press 'c' for custom): ") == "c"):
-    custom_grid = get_custom_puzzle()
-    puzzle = Sudoku(3, board=custom_grid)
-else:
-    difficulty = float(input("What difficulty would you like the puzzle to be?[0-1]: "))
-    puzzle = Sudoku(3).difficulty(difficulty)
-    
+    puzzle.show()
+    solution = puzzle.solve()
 
-puzzle.show()
-solution = puzzle.solve()
+    board = find_list_of_board(puzzle.board)
+    print("This is the actual solution: ")
+    solution.show()
 
-board = find_list_of_board(puzzle.board)
-print("This is the actual solution: ")
-solution.show()
+    if solve_heuristics(board):
+        print("Solved Sudoku board:")
+        result = Sud(board)
+        print(result)
+        # for row in board:
+        #     print(row)
+    else:
+        print("No solution exists.")
 
-if solve_heuristics(board):
-    print("Solved Sudoku board:")
-    result = Sud(board)
-    print(result)
-    # for row in board:
-    #     print(row)
-else:
-    print("No solution exists.")
+
+if __name__ == "__main__":
+    puzzle = get_puzzle_from_cli()
+    main(puzzle)
