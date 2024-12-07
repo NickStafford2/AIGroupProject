@@ -16,7 +16,7 @@ def main(puzzle: Sudoku):
     if solver.solve_heuristics(board):
         print("Solved Sudoku board:")
         # result = Sud(board)
-        result = __format_board_ascii(board)
+        result = cli.format_board_ascii(board)
         print(result)
         # for row in board:
         #     print(row)
