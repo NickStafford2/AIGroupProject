@@ -94,7 +94,6 @@ def least_constraining_values(board: list[list[int]], row: int, col: int) -> lis
             for c in range(9):
                 if board[row][c] == 0 and is_valid(board, row, c, num):
                     constraint_count += 1
-            """ I am pretty sure we need to count the 3x3 subgrid as well."""
             candidates.append((num, constraint_count))
 
     # Sort by the number of constraints (ascending)
