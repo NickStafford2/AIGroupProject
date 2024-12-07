@@ -51,7 +51,7 @@ def most_constrained_variables(board: list[list[int]]) -> list[tuple[int, int]]:
 def most_constraining_variable(
     board: list[list[int]], tied_cells: list[tuple[int, int]]
 ) -> tuple[int, int]:
-    """from a list of tied cells, find the cell that imposes the most constraints on its
+    """From a list of tied cells, find the cell that imposes the most constraints on its
     neighbors. if there is a tie, return random of the maxs"""
     max_constraints = -1
     most_constraining_cell = tied_cells[0]
