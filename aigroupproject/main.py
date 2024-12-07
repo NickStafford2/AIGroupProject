@@ -2,8 +2,8 @@
 from sudoku_py import Sudoku as Sud
 from sudoku import Sudoku
 
-import aigroupproject.cli as cli
-import aigroupproject.sudoku_solver as solver
+import cli as cli
+import sudoku_solver as solver
 
 
 def main(puzzle: Sudoku):
