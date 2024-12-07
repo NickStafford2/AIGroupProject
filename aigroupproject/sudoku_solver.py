@@ -102,7 +102,7 @@ def least_constraining_values(board: list[list[int]], row: int, col: int) -> lis
     return [x[0] for x in candidates]
 
 
-def solve_heuristics(board: list[list[int]]):
+def solve_heuristics(board: list[list[int]]) -> bool:
     # Finding the most constrained variable(s)
     tied_cells: list[tuple[int, int]] = most_constrained_variables(board)
 
