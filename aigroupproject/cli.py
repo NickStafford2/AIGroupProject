@@ -11,6 +11,7 @@ def get_puzzle():
         custom_grid = _get_custom_puzzle()
         return Sudoku(3, board=custom_grid)
     else:
+        # Auto generate a solvable soduku
         difficulty = _get_difficulty()
         return Sudoku(3).difficulty(difficulty)
 
