@@ -16,7 +16,7 @@ def main(puzzle: Sudoku):
     if solver.solve_heuristics(board):
         print("Solution Found. Testing for accuracy...")
         if is_board_solved(board):
-            print("Solution is legal.")
+            print("Solution is solved and legal.")
         else:
             print("Solution is not legal")
 
