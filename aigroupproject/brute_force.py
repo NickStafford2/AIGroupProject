@@ -1,9 +1,9 @@
 # brute_force.py
-import aigroupproject.tests as tests
+import tests
 import time
 
-import aigroupproject.cli as cli
-import aigroupproject.sudoku_solver as solver
+import cli
+import sudoku_solver as solver
 
 
 def brute_force(board: list[list[int]]) -> bool:

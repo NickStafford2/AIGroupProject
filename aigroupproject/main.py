@@ -1,9 +1,13 @@
 # main.py
 import time
-from sudoku import Sudoku
 
+<<<<<<< HEAD
 import cli as cli
 import tests as tests
+=======
+import cli
+import tests
+>>>>>>> c0d2bc418207aadbcc74c03ef3ab6df39e829948
 import sudoku_solver as solver
 
 
