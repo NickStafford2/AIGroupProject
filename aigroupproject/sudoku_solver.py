@@ -52,7 +52,7 @@ def most_constrained_variables(board: list[list[int]]) -> list[tuple[int, int]]:
 def most_constraining_variable(
     board: list[list[int]], tied_cells: list[tuple[int, int]]
 ) -> tuple[int, int]:
-    """from a list of tied cells, find the cell that imposes the most constraints on its
+    """From a list of tied cells, find the cell that imposes the most constraints on its
     neighbors. if there is a tie, return random of the maxs"""
     max_constraints = -1
     most_constraining_cell = tied_cells[0]
@@ -95,7 +95,6 @@ def least_constraining_values(board: list[list[int]], row: int, col: int) -> lis
             for c in range(9):
                 if board[row][c] == 0 and is_valid(board, row, c, num):
                     constraint_count += 1
-            """ I am pretty sure we need to count the 3x3 subgrid as well."""
             candidates.append((num, constraint_count))
 
     # Sort by the number of constraints (ascending)
@@ -103,7 +102,7 @@ def least_constraining_values(board: list[list[int]], row: int, col: int) -> lis
     return [x[0] for x in candidates]
 
 
-def solve_heuristics(board: list[list[int]]):
+def solve_heuristics(board: list[list[int]]) -> bool:
     # Finding the most constrained variable(s)
     tied_cells: list[tuple[int, int]] = most_constrained_variables(board)
 
@@ -127,17 +126,3 @@ def solve_heuristics(board: list[list[int]]):
         # print(f"Backtracking at ({row}, {col})")
 
     return False
-
-
-def solve_algorithm_stupid(board: list[list[int]]):
-    for row in range(9):
-        for col in range(9):
-            if board[row][col] == 0:
-                for num in range(1, 10):
-                    if is_valid(board, row, col, num):
-                        board[row][col] = num
-                        if solve_algorithm_stupid(board):
-                            return True
-                        board[row][col] = 0
-                return False
-    return True
