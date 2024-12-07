@@ -1,4 +1,6 @@
 # tests.py
+import argparse
+import concurrent.futures
 import random
 
 from sudoku import Sudoku
@@ -15,17 +17,48 @@ def get_random_board() -> list[list[int]]:
             return solver.format_board(x)
 
 
-def test_many_boards(epoch: int = 1000):
+def test_single_board(board: list[list[int]]) -> bool:
+    """Test a single sudoku board"""
+    success = solver.solve_heuristics(board)
+    if not success:
+        print("Failed Test")
+        print(cli.format_board_ascii(board))
+        return False
+    return True
+
+
+def test_many_boards(epoch: int = 1000, parallel: bool = False):
+    """Test multiple sudoku boards, optionally in parallel"""
     print(f"Testing {epoch} test boards")
-    for i in range(epoch):
-        if i % 100 == 0:
-            print(f"  {i} tests complete...")
-        board = get_random_board()
-        success = solver.solve_heuristics(board)
-        if not success:
-            print("Failed Test")
-            print(cli.format_board_ascii(board))
-            return
+
+    if parallel:
+        # Create a ThreadPoolExecutor to run tests in parallel
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            futures = []
+            for i in range(epoch):
+                if i % 100 == 0 and i != 0:
+                    print(f"  {i} tests complete...")
+
+                board = get_random_board()
+                # Submit the test task to the executor
+                futures.append(executor.submit(test_single_board, board))
+
+            # Wait for all futures to complete and check results
+            for future in concurrent.futures.as_completed(futures):
+                if not future.result():
+                    print("Test failed, stopping...")
+                    return
+    else:
+        # Run tests sequentially if not in parallel
+        for i in range(epoch):
+            if i % 100 == 0 and i != 0:
+                print(f"  {i} tests complete...")
+            board = get_random_board()
+            success = test_single_board(board)
+            if not success:
+                print("Test failed, stopping...")
+                return
+
     print(f"Successfully passed {epoch} tests.")
 
 
@@ -84,5 +117,33 @@ def is_board_solved(board: list[list[int]]) -> bool:
     return is_board_legal(board) and is_board_complete(board)
 
 
+def main():
+    """Main function for parsing CLI arguments and running tests"""
+    # Set up argparse to handle CLI arguments
+    parser = argparse.ArgumentParser(description="Run multiple Sudoku tests.")
+
+    # Add argument for epochs (number of test boards to run)
+    parser.add_argument(
+        "epochs",
+        type=int,
+        nargs="?",  # Make this argument optional
+        default=1000,
+        help="Number of test boards to run (default is 1000)",
+    )
+
+    # Add argument for parallel execution
+    parser.add_argument(
+        "-p",
+        "--parallel",
+        action="store_true",  # This flag doesn't need a value; it's a toggle
+        help="Run the tests in parallel",
+    )
+
+    args = parser.parse_args()
+
+    # Run tests with the number of epochs and parallelism option provided by the user
+    test_many_boards(epoch=args.epochs, parallel=args.parallel)
+
+
 if __name__ == "__main__":
-    test_many_boards()
+    main()
