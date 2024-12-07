@@ -2,9 +2,9 @@
 import time
 from sudoku import Sudoku
 
-import aigroupproject.cli as cli
-import aigroupproject.tests as tests
-import aigroupproject.sudoku_solver as solver
+import cli as cli
+import tests as tests
+import sudoku_solver as solver
 
 
 def main(board: list[list[int]]):
