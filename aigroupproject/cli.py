@@ -53,3 +53,22 @@ def _get_difficulty():
             print("Invalid input: Please enter a number between 0 and 1. Try again.")
         except Exception as e:
             print(f"An unexpected error occurred: {e}. Try again.")
+
+
+def format_board_ascii(board: list[list[int]]) -> str:
+    width = 3
+    height = 3
+    size = width * height
+
+    table = ""
+    cell_length = len(str(size))
+    format_int = "{0:0" + str(cell_length) + "d}"
+    for i, row in enumerate(board):
+        if i == 0:
+            table += ("+-" + "-" * (cell_length + 1) * width) * height + "+" + "\n"
+        table += (("| " + "{} " * width) * height + "|").format(
+            *[(format_int.format(x) if x != 0 else " " * cell_length) for x in row]
+        ) + "\n"
+        if i == size - 1 or i % height == height - 1:
+            table += ("+-" + "-" * (cell_length + 1) * width) * height + "+" + "\n"
+    return table

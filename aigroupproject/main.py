@@ -35,31 +35,12 @@ def from_nothing(puzzle: Sudoku):
     if solver.solve_heuristics(board):
         print("Solved Sudoku board:")
         # result = Sud(board)
-        result = __format_board_ascii(board)
+        result = cli.format_board_ascii(board)
         print(result)
         # for row in board:
         #     print(row)
     else:
         print("No solution exists.")
-
-
-def __format_board_ascii(board: list[list[int]]) -> str:
-    width = 3
-    height = 3
-    size = width * height
-
-    table = ""
-    cell_length = len(str(size))
-    format_int = "{0:0" + str(cell_length) + "d}"
-    for i, row in enumerate(board):
-        if i == 0:
-            table += ("+-" + "-" * (cell_length + 1) * width) * height + "+" + "\n"
-        table += (("| " + "{} " * width) * height + "|").format(
-            *[(format_int.format(x) if x != 0 else " " * cell_length) for x in row]
-        ) + "\n"
-        if i == size - 1 or i % height == height - 1:
-            table += ("+-" + "-" * (cell_length + 1) * width) * height + "+" + "\n"
-    return table
 
 
 if __name__ == "__main__":
