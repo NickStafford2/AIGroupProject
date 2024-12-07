@@ -5,8 +5,8 @@ import random
 
 from sudoku import Sudoku
 
-import aigroupproject.cli as cli
-import aigroupproject.sudoku_solver as solver
+import cli as cli
+import sudoku_solver as solver
 
 
 def test_single_board():
