@@ -1,18 +1,22 @@
 # tests.py
+import time
 import argparse
-from concurrent.futures import ProcessPoolExecutor
 import random
-
-from sudoku import Sudoku
+from concurrent.futures import ProcessPoolExecutor
 
 import cli as cli
 import sudoku_solver as solver
+import lookup_table as tbl
+from sudoku import Sudoku
 
 
-def test_single_board():
+def test_single_board(lookup_table: bool = False):
     """Test a single sudoku board."""
     board = get_random_board()
-    success = solver.solve_heuristics(board)
+    if lookup_table:
+        success = tbl.solve_heuristics_root(board)
+    else:
+        success = solver.solve_heuristics(board)
     if not success:
         print("Failed Test")
         print(cli.format_board_ascii(board))
@@ -27,38 +31,18 @@ def get_random_board() -> list[list[int]]:
     return solver.format_board(x)
 
 
-def test_batch(epoch: int = 100, parallel: bool = False):
-    """Run tests on multiple boards (batch)."""
-    print(f"Testing {epoch} test boards")
-
-    if parallel:
-        with ProcessPoolExecutor() as executor:
-            results = list(executor.map(run_single_test, range(epoch)))
-        failed_tests = sum(1 for result in results if not result)
-        if failed_tests > 0:
-            print(f"Tests failed: {failed_tests}")
-        else:
-            print(f"Successfully passed {epoch} tests.")
-    else:
-        for i in range(epoch):
-            if i % 10 == 0 and i != 0:
-                print(f"{i} tests complete...")
-            if not test_single_board():
-                print("Test failed")
-                break
-        else:
-            print(f"Successfully passed {epoch} tests.")
-
-
-def run_single_test(_):
+def run_single_test(lookup_table: bool = False):
     """Helper function to run a single test in parallel."""
-    return test_single_board()
+    return test_single_board(lookup_table)
 
 
-def test_many_boards(epoch: int = 100, parallel: bool = False):
+def test_many_boards(
+    epoch: int = 100, parallel: bool = False, lookup_table: bool = False
+):
     """Run tests on multiple boards (batch)."""
-    print(f"Testing {epoch} test boards")
+    print(f"Testing {epoch} test batch")
 
+    start_time = time.time()
     if parallel:
         with ProcessPoolExecutor() as executor:
             results = list(executor.map(run_single_test, range(epoch)))
@@ -71,11 +55,13 @@ def test_many_boards(epoch: int = 100, parallel: bool = False):
         for i in range(epoch):
             if i % 10 == 0 and i != 0:
                 print(f"{i} tests complete...")
-            if not test_single_board():
+            if not test_single_board(lookup_table):
                 print("Test failed")
                 break
         else:
             print(f"Successfully passed {epoch} tests.")
+    end_time = time.time()
+    print(f"Heuristic solving time: {end_time - start_time:.6f} seconds.")
 
 
 def is_board_legal(board: list[list[int]]) -> bool:
@@ -149,6 +135,14 @@ def main():
 
     # Add argument for parallel execution
     parser.add_argument(
+        "-lt",
+        "--lookup_table",
+        action="store_true",  # This flag doesn't need a value; it's a toggle
+        help="Run the tests in parallel",
+    )
+
+    # Add argument for parallel execution
+    parser.add_argument(
         "-p",
         "--parallel",
         action="store_true",  # This flag doesn't need a value; it's a toggle
@@ -158,7 +152,9 @@ def main():
     args = parser.parse_args()
 
     # Run tests with the number of epochs and parallelism option provided by the user
-    test_many_boards(epoch=args.epochs, parallel=args.parallel)
+    test_many_boards(
+        epoch=args.epochs, parallel=args.parallel, lookup_table=args.lookup_table
+    )
 
 
 if __name__ == "__main__":

@@ -2,8 +2,8 @@
 import time
 
 import cli
-import tests
 import sudoku_solver as solver
+import tests
 
 
 def main(board: list[list[int]]):

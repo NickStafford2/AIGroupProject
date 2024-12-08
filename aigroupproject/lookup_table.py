@@ -34,7 +34,7 @@ class State:
                 if cell != 0:
                     self.constrain(row, col, cell)
 
-    def constrain(self, row: int, col: int, val: int, verbose: bool = True):
+    def constrain(self, row: int, col: int, val: int, verbose: bool = False):
         for i in range(9):
             self.table[row][i].discard(val)
             self.table[i][col].discard(val)
@@ -188,10 +188,10 @@ def solve_heuristics_root(grid: list[list[int]]) -> State:
 
 def solve_heuristics(state: State, depth: int = 0) -> State:
     tab = " " * depth
-    print(f"{tab}Depth={depth}")
+    # print(f"{tab}Depth={depth}")
     # Finding the most constrained variable(s)
     tied_cells: list[tuple[int, int, set[int]]] = most_constrained_variables(state)
-    print(f"{tab}{len(tied_cells)} most constrained = {tied_cells}")
+    # print(f"{tab}{len(tied_cells)} most constrained = {tied_cells}")
 
     # If the board is solved
     if not tied_cells:
@@ -199,27 +199,25 @@ def solve_heuristics(state: State, depth: int = 0) -> State:
 
     # If there's a tie, use Most Constraining Variable to break it
     if len(tied_cells) > 1:
-        print(f"{tab}Tie found. find most constraining")
+        # print(f"{tab}Tie found. find most constraining")
         row, col, values = most_constraining_variable(state, tied_cells)
     else:
         row, col, values = tied_cells[0]
 
-    print(f"{tab} most constraining = ({row},{col})={values}")
+    # print(f"{tab} most constraining = ({row},{col})={values}")
     # trying the least constraining values for the selected cell
     for num in least_constraining_values(state, row, col):
         # if not is_valid(look_ahead_table, row, col, num):
         #     print(f"can not add {num} at ({row},{col})")
         #     continue
         next_state = deepcopy(state)
-        print(f"Trying {num} at ({row}, {col})")
-        next_state.constrain(row, col, num)
+        # print(f"Trying {num} at ({row}, {col})")
+        next_state.constrain(row, col, num, False)
         if solve_heuristics(next_state, depth + 1):
-            print(f"{tab}Backtracking Success")
+            # print(f"{tab}Backtracking Success")
             return state
-        print(f"{tab}Failed")
-        print(f"Backtracking at ({row}, {col})")
 
-    print(f"{tab}Backtracking Fail")
+    # print(f"{tab}Backtracking Fail")
     return state
 
 
@@ -231,6 +229,7 @@ def main(board: list[list[int]]):
         grid = solution.to_grid()
         print(f"Heuristic solving time: {end_time - start_time:.6f} seconds.")
         print("Solution Found. Testing for accuracy...")
+        print(cli.format_board_ascii(grid))
         if tests.is_board_solved(grid):
             print("Solution is solved and legal.")
         else:
