@@ -31,18 +31,18 @@ def main(board: list[list[int]]):
     if brute_force(board):
         end_time = time.time()
         print(f"Brute-force solving time: {end_time - start_time:.6f} seconds.")
-
-        print(cli.format_board_ascii(board))
         print("Solution Found. Testing for accuracy...")
         if tests.is_board_solved(board):
             print("Solution is solved and legal.")
         else:
             print("Solution is not legal")
+        print(cli.format_board_ascii(board))
     else:
         print("No solution exists.")
 
 
 if __name__ == "__main__":
     puzzle = cli.get_puzzle()
+    puzzle.show()
     board = solver.format_board(puzzle.board)
     main(board)

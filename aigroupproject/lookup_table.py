@@ -238,15 +238,11 @@ def main(board: list[list[int]]):
         grid = solution.to_grid()
         print(f"Heuristic solving time: {end_time - start_time:.6f} seconds.")
         print("Solution Found. Testing for accuracy...")
-        print(cli.format_board_ascii(grid))
         if tests.is_board_solved(grid):
             print("Solution is solved and legal.")
         else:
             print("Solution is not legal\n")
-
-        # result = Sud(board)
-        # for row in board:
-        #     print(row)
+        print(cli.format_board_ascii(grid))
     else:
         print("No solution exists.\n")
 
