@@ -226,13 +226,8 @@ def solve_heuristics(state: State, depth: int = 0) -> State:
         if state.is_finished():
             return state
     # print(f"{tab}Depth={depth}")
-    # Finding the most constrained variable(s)
     tied_cells: list[tuple[int, int, set[int]]] = most_constrained_variables(state)
     # print(f"{tab}{len(tied_cells)} most constrained = {tied_cells}")
-
-    # If the board is solved
-    if not tied_cells:
-        return state
 
     # If there's a tie, use Most Constraining Variable to break it
     if len(tied_cells) > 1:
@@ -242,18 +237,12 @@ def solve_heuristics(state: State, depth: int = 0) -> State:
         row, col, values = tied_cells[0]
 
     # print(f"{tab} most constraining = ({row},{col})={values}")
-    # trying the least constraining values for the selected cell
     for num in least_constraining_values(state, row, col):
-        # if not is_valid(look_ahead_table, row, col, num):
-        #     print(f"can not add {num} at ({row},{col})")
-        #     continue
         # print(f"Trying {num} at ({row}, {col})")
         state.constrain(row, col, num, False)
         if solve_heuristics(state, depth + 1):
             # print(f"{tab}Backtracking Success")
             return state
-
-    # print(f"{tab}Backtracking Fail")
     return state
 
 
