@@ -48,6 +48,13 @@ class State:
         if verbose:
             print(self)
 
+    def is_finished(self):
+        for row in self.table:
+            for cell_possible_values in row:
+                if len(cell_possible_values) > 1:
+                    return False
+        return True
+
     @override
     def __str__(self):
         return self.format_as_string()
@@ -187,7 +194,11 @@ def solve_heuristics_root(grid: list[list[int]]) -> State:
 
 
 def solve_heuristics(state: State, depth: int = 0) -> State:
-    tab = " " * depth
+    # tab = " " * depth
+    if state.is_finished():
+        # every cell only has one possible value. Leave early. used lookup table
+        # print(f"{tab}finished early")
+        return state
     # print(f"{tab}Depth={depth}")
     # Finding the most constrained variable(s)
     tied_cells: list[tuple[int, int, set[int]]] = most_constrained_variables(state)
@@ -210,10 +221,9 @@ def solve_heuristics(state: State, depth: int = 0) -> State:
         # if not is_valid(look_ahead_table, row, col, num):
         #     print(f"can not add {num} at ({row},{col})")
         #     continue
-        next_state = deepcopy(state)
         # print(f"Trying {num} at ({row}, {col})")
-        next_state.constrain(row, col, num, False)
-        if solve_heuristics(next_state, depth + 1):
+        state.constrain(row, col, num, False)
+        if solve_heuristics(state, depth + 1):
             # print(f"{tab}Backtracking Success")
             return state
 
