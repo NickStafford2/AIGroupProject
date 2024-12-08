@@ -1,4 +1,9 @@
 # sudoku_solver.py
+import time
+
+import cli
+import sudoku_solver as solver
+import tests
 
 
 def format_board(grid: list[list[int | None]]) -> list[list[int]]:
@@ -125,3 +130,28 @@ def solve_heuristics(board: list[list[int]]) -> bool:
         # print(f"Backtracking at ({row}, {col})")
 
     return False
+
+
+def main(board: list[list[int]]):
+    start_time = time.time()
+    if solver.solve_heuristics(board):
+        end_time = time.time()
+        print(f"Heuristic solving time: {end_time - start_time:.6f} seconds.")
+        print("Solution Found. Testing for accuracy...")
+        if tests.is_board_solved(board):
+            print("Solution is solved and legal.")
+        else:
+            print("Solution is not legal")
+
+        print("\nSolved Sudoku board:")
+        result = cli.format_board_ascii(board)
+        print(result)
+    else:
+        print("No solution exists.")
+
+
+if __name__ == "__main__":
+    puzzle = cli.get_puzzle()
+    puzzle.show()
+    board = solver.format_board(puzzle.board)
+    main(board)
