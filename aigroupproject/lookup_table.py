@@ -1,11 +1,26 @@
 # lookup_table.py
-from copy import deepcopy
+import random
 import time
+from copy import deepcopy
 from typing import override
 
 import cli
 import sudoku_solver as solver
 import tests
+from sudoku import Sudoku
+
+
+class RT:
+    function_runtimes = {}
+
+    @classmethod
+    def update_runtime(cls, function_name: str, start_time: float, end_time: float):
+        # Update the runtime in the dictionary for the given function
+        elapsed_time = end_time - start_time
+        if function_name not in cls.function_runtimes:
+            # print(cls.function_runtimes)
+            cls.function_runtimes[function_name] = 0
+        cls.function_runtimes[function_name] += elapsed_time
 
 
 class State:
@@ -257,6 +272,22 @@ def main(board: list[list[int]]):
         print(cli.format_board_ascii(grid))
     else:
         print("No solution exists.\n")
+
+
+def test():
+    start_time = time.time()
+    boards = []
+    for _ in range(1000):
+        d = random.uniform(0, 1)
+        x = Sudoku(3).difficulty(d).board
+        boards.append(solver.format_board(x))
+    for i in range(100):
+        board = solver.format_board(boards[i])
+        solve_heuristics_root(board)
+    for func, runtime in RT.function_runtimes.items():
+        print(f"{func}: {runtime:.6f} seconds")
+    end_time = time.time()
+    print(f"Heuristic solving time: {end_time - start_time:.6f} seconds.")
 
 
 if __name__ == "__main__":

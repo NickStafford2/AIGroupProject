@@ -44,6 +44,7 @@ def test_many_boards(
     parallel: bool = False,
     lookup_table: bool = False,
     brute_force: bool = False,
+    verbose: bool = False,
 ):
     """Run tests on multiple boards (batch)."""
     print(f"Testing {epoch} test batch")
@@ -59,7 +60,7 @@ def test_many_boards(
             print(f"Successfully passed {epoch} tests.")
     else:
         for i in range(epoch):
-            if i % 10 == 0 and i != 0:
+            if verbose and i % 10 == 0 and i != 0:
                 print(f"{i} tests complete...")
             if not test_single_board(lookup_table, brute_force):
                 print("Test failed")
@@ -139,14 +140,12 @@ def main():
         help="Number of test boards to run (default is 1000)",
     )
 
-    # Add argument for parallel execution
     parser.add_argument(
         "-lt",
         "--lookup_table",
         action="store_true",  # This flag doesn't need a value; it's a toggle
         help="Run the tests with a lookup table",
     )
-    # Add argument for parallel execution
     parser.add_argument(
         "-bf",
         "--brute_force",
@@ -154,6 +153,12 @@ def main():
         help="Run the tests with the brute force algorithm",
     )
 
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",  # This flag doesn't need a value; it's a toggle
+        help="Print extra information to the console.",
+    )
     # Add argument for parallel execution
     parser.add_argument(
         "-p",
@@ -170,6 +175,7 @@ def main():
         parallel=args.parallel,
         lookup_table=args.lookup_table,
         brute_force=args.brute_force,
+        verbose=args.verbose,
     )
 
 
