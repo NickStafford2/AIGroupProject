@@ -1,4 +1,5 @@
 # lookup_table.py
+from copy import deepcopy
 import time
 from typing import override
 
@@ -9,22 +10,24 @@ import tests
 
 class State:
     table: list[list[set[int]]]
-    is_set: list[list[bool]]
+    is_set: set[tuple[int, int]]
+    is_not_set: set[tuple[int, int]]
 
     def __init__(self, grid: list[list[int]]) -> None:
         self.table = []
-        self.is_set = []
-        for _ in range(9):
+        self.is_set = set()
+        self.is_not_set = set()
+        for r in range(9):
             row: list[set[int]] = []
-            for _ in range(9):
+            for c in range(9):
                 row.append(set(range(1, 10)))
+                self.is_not_set.add((r, c))
             self.table.append(row)
-            self.is_set.append([False] * 9)
 
         self.init_table(grid)
 
     def is_valid(self, row: int, col: int, num: int) -> bool:
-        return not self.is_set[row][col] and num in self.table[row][col]
+        return (row, col) in self.is_not_set and num in self.table[row][col]
 
     def init_table(self, grid: list[list[int]]):
         for row in range(9):
@@ -43,16 +46,24 @@ class State:
             for j in range(3):
                 self.table[i + start_row][j + start_col].discard(val)
         self.table[row][col] = set([val])
-        self.is_set[row][col] = True
+        self.is_set.add((row, col))
+        self.is_not_set.remove((row, col))
         if verbose:
             print(self)
 
+    def constrain_trivial_cells(self) -> bool:
+        did_update = False
+        to_update = deepcopy(self.is_not_set)
+        for r, c in to_update:
+            if len(self.table[r][c]) == 1:
+                to_update.add((r, c))
+                did_update = True
+                val = next(iter(self.table[r][c]))
+                self.constrain(r, c, val)
+        return did_update
+
     def is_finished(self):
-        for row in self.table:
-            for cell_possible_values in row:
-                if len(cell_possible_values) > 1:
-                    return False
-        return True
+        return all(len(self.table[r][c]) <= 1 for r, c in self.is_not_set)
 
     @override
     def __str__(self):
@@ -103,18 +114,16 @@ def most_constrained_variables(
     tied_cells: list[tuple[int, int, set[int]]] = []
     min_valid_values = 10  # Start with a value larger than the max (9)
 
-    for r in range(9):
-        for c in range(9):
-            if not state.is_set[r][c]:
-                possible_values = state.table[r][c]
-                new_min = len(possible_values)
-                if new_min == min_valid_values:
-                    # ties are allowed, if two cells are equally constrained
-                    tied_cells.append((r, c, possible_values))
-                elif new_min < min_valid_values:
-                    min_valid_values = new_min
-                    # remove old cells, since this cell is more constrined.
-                    tied_cells = [(r, c, possible_values)]
+    for r, c in state.is_not_set:
+        possible_values = state.table[r][c]
+        new_min = len(possible_values)
+        if new_min == min_valid_values:
+            # ties are allowed, if two cells are equally constrained
+            tied_cells.append((r, c, possible_values))
+        elif new_min < min_valid_values:
+            min_valid_values = new_min
+            # remove old cells, since this cell is more constrined.
+            tied_cells = [(r, c, possible_values)]
     return tied_cells
 
 
@@ -156,7 +165,7 @@ def most_constraining_variable(
 
 def least_constraining_values(state: State, row: int, col: int) -> list[int]:
     """Get the possible values of a cell, ordered by their least constraining effect"""
-    assert not state.is_set[row][col]
+    assert (row, col) not in state.is_set
     candidates: list[tuple[int, int]] = []
     for num in state.table[row][col]:
         # counting how many other cells this value would restrict
@@ -198,6 +207,9 @@ def solve_heuristics(state: State, depth: int = 0) -> State:
         # every cell only has one possible value. Leave early. used lookup table
         # print(f"{tab}finished early")
         return state
+    while state.constrain_trivial_cells():
+        if state.is_finished():
+            return state
     # print(f"{tab}Depth={depth}")
     # Finding the most constrained variable(s)
     tied_cells: list[tuple[int, int, set[int]]] = most_constrained_variables(state)
