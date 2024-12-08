@@ -1,6 +1,5 @@
 # lookup_table.py
 import time
-from copy import deepcopy
 from typing import override
 
 import cli
@@ -243,16 +242,13 @@ def main(board: list[list[int]]):
         if tests.is_board_solved(grid):
             print("Solution is solved and legal.")
         else:
-            print("Solution is not legal")
+            print("Solution is not legal\n")
 
-        print("\nSolved Sudoku board:")
         # result = Sud(board)
-        result = cli.format_board_ascii(board)
-        print(result)
         # for row in board:
         #     print(row)
     else:
-        print("No solution exists.")
+        print("No solution exists.\n")
 
 
 if __name__ == "__main__":
