@@ -1,24 +1,24 @@
 {
-  "venvPath": ".",
-  "venv": ".venv",
-  "exclude": ["**/node_modules", "**/__pycache__"],
+	"venvPath": ".",
+	"venv": ".venv",
+	"exclude": ["**/node_modules", "**/__pycache__"],
 
-  "defineConstant": {
-    "DEBUG": true
-  },
+	"defineConstant": {
+		"DEBUG": true
+	},
 
-  "reportMissingImports": "error",
-  "reportMissingTypeStubs": false,
+	"reportMissingImports": "error",
+	"reportMissingTypeStubs": false,
 
-  "pythonVersion": "3.12.5",
-  "pythonPlatform": "Linux",
+	"pythonVersion": "3.12.5",
+	"pythonPlatform": "Linux",
 
-  "executionEnvironments": [
-    {
-      "root": "app",
-      "pythonVersion": "3.12.5",
-      "pythonPlatform": "Linux",
-      "reportMissingImports": "warning"
-    }
-  ]
+	"executionEnvironments": [
+		{
+			"root": "aigroupproject",
+			"pythonVersion": "3.12.5",
+			"pythonPlatform": "Linux",
+			"reportMissingImports": "warning"
+		}
+	]
 }
