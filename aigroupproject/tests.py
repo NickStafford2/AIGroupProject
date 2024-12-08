@@ -1,20 +1,23 @@
 # tests.py
-import time
 import argparse
 import random
+import time
 from concurrent.futures import ProcessPoolExecutor
 
+import brute_force as bf
 import cli as cli
-import sudoku_solver as solver
 import lookup_table as tbl
+import sudoku_solver as solver
 from sudoku import Sudoku
 
 
-def test_single_board(lookup_table: bool = False):
+def test_single_board(lookup_table: bool = False, brute_force: bool = False):
     """Test a single sudoku board."""
     board = get_random_board()
     if lookup_table:
         success = tbl.solve_heuristics_root(board)
+    elif brute_force:
+        success = bf.brute_force(board)
     else:
         success = solver.solve_heuristics(board)
     if not success:
@@ -31,13 +34,16 @@ def get_random_board() -> list[list[int]]:
     return solver.format_board(x)
 
 
-def run_single_test(lookup_table: bool = False):
+def run_single_test(lookup_table: bool = False, brute_force: bool = False):
     """Helper function to run a single test in parallel."""
-    return test_single_board(lookup_table)
+    return test_single_board(lookup_table, brute_force)
 
 
 def test_many_boards(
-    epoch: int = 100, parallel: bool = False, lookup_table: bool = False
+    epoch: int = 100,
+    parallel: bool = False,
+    lookup_table: bool = False,
+    brute_force: bool = False,
 ):
     """Run tests on multiple boards (batch)."""
     print(f"Testing {epoch} test batch")
@@ -55,7 +61,7 @@ def test_many_boards(
         for i in range(epoch):
             if i % 10 == 0 and i != 0:
                 print(f"{i} tests complete...")
-            if not test_single_board(lookup_table):
+            if not test_single_board(lookup_table, brute_force):
                 print("Test failed")
                 break
         else:
@@ -138,7 +144,14 @@ def main():
         "-lt",
         "--lookup_table",
         action="store_true",  # This flag doesn't need a value; it's a toggle
-        help="Run the tests in parallel",
+        help="Run the tests with a lookup table",
+    )
+    # Add argument for parallel execution
+    parser.add_argument(
+        "-bf",
+        "--brute_force",
+        action="store_true",  # This flag doesn't need a value; it's a toggle
+        help="Run the tests with the brute force algorithm",
     )
 
     # Add argument for parallel execution
@@ -153,7 +166,10 @@ def main():
 
     # Run tests with the number of epochs and parallelism option provided by the user
     test_many_boards(
-        epoch=args.epochs, parallel=args.parallel, lookup_table=args.lookup_table
+        epoch=args.epochs,
+        parallel=args.parallel,
+        lookup_table=args.lookup_table,
+        brute_force=args.brute_force,
     )
 
 
