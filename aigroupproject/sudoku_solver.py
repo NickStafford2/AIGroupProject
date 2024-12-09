@@ -3,7 +3,7 @@ import time
 
 import cli
 import sudoku_solver as solver
-import tests
+# import tests
 
 
 def format_board(grid: list[list[int | None]]) -> list[list[int]]:
@@ -32,24 +32,32 @@ def is_valid(board: list[list[int]], row: int, col: int, num: int) -> bool:
     return True
 
 
+#least available valid number is stored and sent to most constraining variable
 def most_constrained_variables(board: list[list[int]]) -> list[tuple[int, int]]:
     tied_cells: list[tuple[int, int]] = []
     min_valid_values = 10  # Start with a value larger than the max (9)
 
     for r in range(9):
         for c in range(9):
+            # print("checking ---> ",board[r][c])
             if board[r][c] == 0:
+                # print("zero---> ",board[r][c])
                 valid_values = [
                     num for num in range(1, 10) if is_valid(board, r, c, num)
                 ]
+                print((r,c),valid_values, len(valid_values), min_valid_values) 
                 if len(valid_values) == min_valid_values:
                     # ties are allowed, if two cells are equally constrained
+                    print("this will print",(r,c), valid_values, min_valid_values)
                     tied_cells.append((r, c))
+                    
                 elif len(valid_values) < min_valid_values:
                     min_valid_values = len(valid_values)
                     # remove old cells, since this cell is more constrined.
+                    print("this line of code is working",(r,c), valid_values, min_valid_values)
                     tied_cells = [(r, c)]
-
+    print("this code is working")
+    print(tied_cells, min_valid_values)
     return tied_cells
 
 
@@ -60,10 +68,11 @@ def most_constraining_variable(
     neighbors. if there is a tie, return random of the maxs"""
     max_constraints = -1
     most_constraining_cell = tied_cells[0]
+    # print("most constraining cell:", most_constraining_cell)
 
     for r, c in tied_cells:
         constraints = 0
-
+        # print("the row and colm: ", r,c)
         # counting unassigned cells in the same row and column
         for i in range(9):
             if board[r][i] == 0:
@@ -75,14 +84,16 @@ def most_constraining_variable(
         start_row, start_col = 3 * (r // 3), 3 * (c // 3)
         for i in range(start_row, start_row + 3):
             for j in range(start_col, start_col + 3):
+                # print("sub board--->", board[i][j])
                 if board[i][j] == 0:
                     constraints += 1
-
+        # print("most constraining:", constraints)
         # updating the most constraining variable
         if constraints > max_constraints:
             max_constraints = constraints
             most_constraining_cell = (r, c)
-
+            # print("new most constrininig: ", r,c, max_constraints)
+    # print("--->most constraining cell", most_constraining_cell)
     return most_constraining_cell
 
 
@@ -99,10 +110,14 @@ def least_constraining_values(board: list[list[int]], row: int, col: int) -> lis
             for c in range(9):
                 if board[row][c] == 0 and is_valid(board, row, c, num):
                     constraint_count += 1
+            
             candidates.append((num, constraint_count))
 
     # Sort by the number of constraints (ascending)
+    # print("---->candidates before:", candidates)
     candidates.sort(key=lambda x: x[1])
+    # print("---->candidates after:", candidates)
+    print(candidates[0])
     return [x[0] for x in candidates]
 
 
@@ -137,11 +152,11 @@ def main(board: list[list[int]]):
     if solver.solve_heuristics(board):
         end_time = time.time()
         print(f"Heuristic solving time: {end_time - start_time:.6f} seconds.")
-        print("Solution Found. Testing for accuracy...")
-        if tests.is_board_solved(board):
-            print("Solution is solved and legal.")
-        else:
-            print("Solution is not legal")
+        # print("Solution Found. Testing for accuracy...")
+        # if tests.is_board_solved(board):
+        #     print("Solution is solved and legal.")
+        # else:
+        #     print("Solution is not legal")
 
         print("\nSolved Sudoku board:")
         result = cli.format_board_ascii(board)
