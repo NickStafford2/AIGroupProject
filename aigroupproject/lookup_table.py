@@ -7,31 +7,21 @@ from typing import override
 import cli
 import sudoku_solver as solver
 import tests
+import utils
 from sudoku import Sudoku
-
-
-class RT:
-    function_runtimes = {}
-
-    @classmethod
-    def update_runtime(cls, function_name: str, start_time: float, end_time: float):
-        # Update the runtime in the dictionary for the given function
-        elapsed_time = end_time - start_time
-        if function_name not in cls.function_runtimes:
-            # print(cls.function_runtimes)
-            cls.function_runtimes[function_name] = 0
-        cls.function_runtimes[function_name] += elapsed_time
 
 
 class State:
     table: list[list[set[int]]]
     is_set: set[tuple[int, int]]
     is_not_set: set[tuple[int, int]]
+    verbose: bool = False
 
-    def __init__(self, grid: list[list[int]]) -> None:
+    def __init__(self, grid: list[list[int]], verbose: bool = False) -> None:
         self.table = []
         self.is_set = set()
         self.is_not_set = set()
+        self.verbose = verbose
         for r in range(9):
             row: list[set[int]] = []
             for c in range(9):
@@ -63,8 +53,8 @@ class State:
         self.table[row][col] = set([val])
         self.is_set.add((row, col))
         self.is_not_set.remove((row, col))
-        if verbose:
-            print(self)
+        if verbose or self.verbose:
+            print(self.format_as_string(row, col))
 
     def constrain_trivial_cells(self) -> bool:
         did_update = False
@@ -137,7 +127,7 @@ def most_constrained_variables(
             tied_cells.append((r, c, possible_values))
         elif new_min < min_valid_values:
             min_valid_values = new_min
-            # remove old cells, since this cell is more constrined.
+            # remove old cells, since this cell is more constrained.
             tied_cells = [(r, c, possible_values)]
     return tied_cells
 
@@ -211,8 +201,8 @@ def least_constraining_values(state: State, row: int, col: int) -> list[int]:
     return [x[0] for x in candidates]
 
 
-def solve_heuristics_root(grid: list[list[int]]) -> State:
-    state = State(grid)
+def solve_heuristics_root(grid: list[list[int]], verbose=False) -> State:
+    state = State(grid, verbose)
     return solve_heuristics(state)
 
 
@@ -239,16 +229,16 @@ def solve_heuristics(state: State, depth: int = 0) -> State:
     # print(f"{tab} most constraining = ({row},{col})={values}")
     for num in least_constraining_values(state, row, col):
         # print(f"Trying {num} at ({row}, {col})")
-        state.constrain(row, col, num, False)
+        state.constrain(row, col, num, True)
         if solve_heuristics(state, depth + 1):
             # print(f"{tab}Backtracking Success")
             return state
     return state
 
 
-def main(board: list[list[int]]):
+def main(board: list[list[int]], verbose: bool = False):
     start_time = time.time()
-    solution = solve_heuristics_root(board)
+    solution = solve_heuristics_root(board, verbose)
     if solution:
         end_time = time.time()
         grid = solution.to_grid()
@@ -263,17 +253,17 @@ def main(board: list[list[int]]):
         print("No solution exists.\n")
 
 
-def test():
+def test(verbose: bool = False):
     start_time = time.time()
-    boards = []
+    boards: list[list[list[int]]] = []
     for _ in range(1000):
         d = random.uniform(0, 1)
         x = Sudoku(3).difficulty(d).board
         boards.append(solver.format_board(x))
     for i in range(100):
-        board = solver.format_board(boards[i])
-        solve_heuristics_root(board)
-    for func, runtime in RT.function_runtimes.items():
+        board = boards[i]
+        _ = solve_heuristics_root(board, verbose)
+    for func, runtime in utils.RT.function_runtimes.items():
         print(f"{func}: {runtime:.6f} seconds")
     end_time = time.time()
     print(f"Heuristic solving time: {end_time - start_time:.6f} seconds.")
@@ -283,4 +273,4 @@ if __name__ == "__main__":
     puzzle = cli.get_puzzle()
     puzzle.show()
     board = solver.format_board(puzzle.board)
-    main(board)
+    main(board, False)
