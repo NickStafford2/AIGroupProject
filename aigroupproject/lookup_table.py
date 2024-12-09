@@ -201,7 +201,7 @@ def least_constraining_values(state: State, row: int, col: int) -> list[int]:
     return [x[0] for x in candidates]
 
 
-def solve_heuristics_root(grid: list[list[int]], verbose=False) -> State:
+def solve_heuristics_root(grid: list[list[int]], verbose: bool = False) -> State:
     state = State(grid, verbose)
     return solve_heuristics(state)
 
@@ -222,9 +222,9 @@ def solve_heuristics(state: State, depth: int = 0) -> State:
     # If there's a tie, use Most Constraining Variable to break it
     if len(tied_cells) > 1:
         # print(f"{tab}Tie found. find most constraining")
-        row, col, values = most_constraining_variable(state, tied_cells)
+        row, col, _ = most_constraining_variable(state, tied_cells)
     else:
-        row, col, values = tied_cells[0]
+        row, col, _ = tied_cells[0]
 
     # print(f"{tab} most constraining = ({row},{col})={values}")
     for num in least_constraining_values(state, row, col):
